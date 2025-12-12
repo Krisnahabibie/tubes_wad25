@@ -12,6 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         //
+        $middleware->alias([
+            'Admin' => \App\Http\Middleware\Admin::class,
+            'IsManager' => \App\Http\Middleware\IsManager::class, // Tambahkan juga ini jika ada
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

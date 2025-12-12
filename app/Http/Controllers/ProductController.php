@@ -7,54 +7,54 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         $products = product::all();
         return view('products.index', compact('products'));
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
-        //
+        return view('products.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        // 1. Validasi
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required',
             'price' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'description' => 'nullable|string',
         ]);
-    $input = $request->all();
 
-        if ($image = $request->file('image')) {
-            $destinationPath = 'images/products/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-            $input['image'] = "$profileImage";
+        // 2. Upload Gambar
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            // Gambar akan disimpan di folder: storage/app/public/products
+            $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        product::create($input);
-
-        return redirect()->route('products.index')
+        // 3. Simpan ke Database
+        // Pastikan model Product sudah di-import: use App\Models\Product;
+        Product::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'category' => $request->category,
+            'image' => $imagePath,
+        ]);
+        return redirect()->route('home')
             ->with('success', 'produk berhasil ditambahkan.');
     }
     /**
      * Display the specified resource.
-     */public function HomeProduct()
+     */
+    public function HomeProduct()
      {
         $products = \App\Models\product::all();
         $promos = \App\Models\promo::all();
         return view('welcome', compact('products', 'promos'));
      }
-    
 }
