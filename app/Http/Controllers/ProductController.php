@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use illuminate\Support\Facades\Storage;
 
 
 class ProductController extends Controller
@@ -23,29 +24,29 @@ class ProductController extends Controller
     {
         // 1. Validasi
         $request->validate([
-            'name' => 'required',
-            'price' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'nama_produk' => 'required', 
+            'harga_produk' => 'required|numeric',
+            'foto_produk' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'kategori_produk' => 'required'
         ]);
 
         // 2. Upload Gambar
         $imagePath = null;
-        if ($request->hasFile('image')) {
-            // Gambar akan disimpan di folder: storage/app/public/products
-            $imagePath = $request->file('image')->store('products', 'public');
+        if ($request->hasFile('foto_produk')) {
+            $imagePath = $request->file('foto_produk')->store('products', 'public');
         }
 
         // 3. Simpan ke Database
         // Pastikan model Product sudah di-import: use App\Models\Product;
-        Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'category' => $request->category,
-            'image' => $imagePath,
+       Product::create([
+            'nama_produk'       => $request->nama_produk,
+            'deskripsi_produk'  => $request->deskripsi_produk,
+            'harga_produk'      => $request->harga_produk,
+            'stok_produk'       => $request->stok_produk,
+            'kategori_produk'   => $request->kategori_produk,
+            'foto_produk'       => $imagePath,
         ]);
-        return redirect()->route('home')
+        return redirect()->route('products.index')
             ->with('success', 'produk berhasil ditambahkan.');
     }
     /**

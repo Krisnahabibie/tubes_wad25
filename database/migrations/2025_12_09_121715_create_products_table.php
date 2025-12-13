@@ -16,6 +16,7 @@ return new class extends Migration
         $table->string('nama_produk');
         $table->text('deskripsi_produk');
         $table->decimal('harga_produk', 10, 2);
+        $table->integer('stok_produk');
         $table->string('foto_produk')->nullable(); // Foto produk
         $table->enum('kategori_produk', ['coffe', 'non-coffe','food']);
         $table->timestamps();

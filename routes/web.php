@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\RiviewController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\ReservasiController;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\IsManager;
 
 //tampilan halaman depan
-Route::get('/', [App\Http\Controllers\DashboardController::class, 'HomeProduct'])->name('landing_page');
+Route::get('/', [HomeController::class, 'landingPage']);
 
 //khusus admin
 Route::middleware(['auth', \App\Http\Middleware\Admin::class])->group(function () {
@@ -39,7 +40,7 @@ Route::middleware(['auth', \App\Http\Middleware\Admin::class])->group(function (
 
 
 //khusus manager
-Route::middleware(['auth', IsManager::class])->group(function () {
+Route::middleware(['auth', 'role:IsManager'])->prefix('manager')->group(function () {
     Route::resource('staff', StaffController::class);
 });
 //dashboard
