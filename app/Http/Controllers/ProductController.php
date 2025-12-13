@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use illuminate\Support\Facades\Storage;
+use App\Models\Product;
 
 
 class ProductController extends Controller
@@ -58,4 +59,15 @@ class ProductController extends Controller
         $promos = \App\Models\promo::all();
         return view('welcome', compact('products', 'promos'));
      }
-}
+
+     public function edit($id)
+    {
+        if (auth()->user()->role !== 'admin') {
+        abort(403, 'Anda tidak punya akses ke sini!');
+    }
+    
+        $product = Product::findOrFail($id);
+        return view('products.edit', compact('product'));
+    }
+
+}   

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\product;
+use App\Models\Product;
 use App\Models\promo;
 
 class HomeController extends Controller
@@ -13,7 +13,7 @@ class HomeController extends Controller
     {
         // Ini halaman Dashboard User (Bukan halaman depan toko)
         // Mungkin tampilkan history pesanan user di sini?
-        $products = Product::all();
+        $products = \App\Models\Product::all();
         return view('home',compact('products')); 
     }
     
@@ -21,7 +21,7 @@ class HomeController extends Controller
     public function landingPage()
     {
         $products = \App\Models\Product::all();
-        $promos = \App\Models\Promo::all();
+        $promos = \App\Models\promo::all();
         return view('welcome', compact('products', 'promos')); // View 'welcome' adalah tampilan ala Lawson
     }
 }

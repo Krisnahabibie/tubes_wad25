@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-
+protected $table = 'products';
     // --- BAGIAN INI SANGAT PENTING ---
     // Kita mendaftarkan kolom apa saja yang boleh diisi lewat form
     protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'stock',
-        'category',
-        'image',
+        'nama_produk',
+        'deskripsi_produk',
+        'harga_produk',
+        'stok_produk',
+        'kategori_produk',
+        'foto_produk',
     ];
 }

@@ -24,6 +24,7 @@ Route::middleware(['auth', \App\Http\Middleware\Admin::class])->group(function (
     Route::get( '/keranjang',[KeranjangController::class, 'index'])->name('keranjangs.index');
     Route::post('keranjang/add/{product}', [KeranjangController::class, 'add'])->name('keranjangs.add');
     Route::delete('keranjang/remove/{product}', [KeranjangController::class, 'destroy'])->name('keranjangs.remove');
+
 });
 
 // Khusus User yang Login (Bisa Belanja & Reservasi)  
@@ -36,6 +37,7 @@ Route::middleware(['auth', \App\Http\Middleware\Admin::class])->group(function (
     Route::resource('reservasis', ReservasiController::class)->except(['index', 'update', 'destroy']);
     
     Route::resource('riviews', RiviewController::class);
+
   });
 
 

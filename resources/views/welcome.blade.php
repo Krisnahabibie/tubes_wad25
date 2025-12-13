@@ -81,17 +81,17 @@
         @forelse($products as $product)
             <div class="col-md-3 mb-4">
                 <div class="card h-100 shadow-sm border-0 product-card">
-                    <img src="{{ $product->image ? asset('storage/'.$product->image) : 'https://placehold.co/300x200?text=No+Image' }}" 
-                         class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                    <img src="{{ $product->foto_produk ? asset('storage/'.$product->foto_produk) : 'https://placehold.co/300x200?text=No+Image' }}" 
+                         class="card-img-top" alt="{{ $product->nama_produk }}" style="height: 200px; object-fit: cover;">
                     
                     <div class="card-body">
-                        <span class="badge bg-warning text-dark mb-2">{{ $product->category }}</span>
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text text-muted small">{{ Str::limit($product->description, 50) }}</p>
-                        <h5 class="text-primary fw-bold">Rp {{ number_format($product->price, 0, ',', '.') }}</h5>
+                        <span class="badge bg-warning text-dark mb-2">{{ $product->kategori_produk }}</span>
+                        <h5 class="card-title">{{ $product->nama_produk }}</h5>
+                        <p class="card-text text-muted small">{{ Str::limit($product->deskripsi_produk, 50) }}</p>
+                        <h5 class="text-primary fw-bold">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</h5>
                     </div>
                     <div class="card-footer bg-white border-top-0 d-grid">
-                        <form action="{{ route('carts.store') }}" method="POST">
+                        <form action="{{ route('keranjangs.add', $product->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                             <button type="submit" class="btn btn-outline-primary w-100">

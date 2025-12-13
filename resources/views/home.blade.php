@@ -112,20 +112,20 @@
             <div class="col-6 col-md-4 col-lg-3 mb-4">
                 <div class="card product-card shadow-sm">
                     <div class="product-img-wrapper">
-                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300?text=No+Image' }}" 
-                             alt="{{ $product->name }}">
+                        <img src="{{ $product->foto_produk ? asset('storage/' . $product->foto_produk) : 'https://via.placeholder.com/300?text=No+Image' }}" 
+                             alt="{{ $product->nama_produk }}">
                     </div>
 
                     <div class="card-body d-flex flex-column">
-                        <h5 class="product-title text-truncate">{{ $product->name }}</h5>
+                        <h5 class="product-title text-truncate">{{ $product->nama_produk }}</h5>
                         <p class="card-text small text-muted mb-3" style="min-height: 40px;">
-                            {{ Str::limit($product->description, 45) }}
+                            {{ Str::limit($product->deskripsi_produk, 45) }}
                         </p>
                         
                         <div class="mt-auto">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                <small class="text-muted">{{ $product->category ?? 'Umum' }}</small>
+                                <span class="product-price">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</span>
+                                <small class="text-muted">{{ $product->kategori_produk ?? 'Umum' }}</small>
                             </div>
                             
                             <form action="{{ route('keranjangs.add', $product->id) }}" method="POST">

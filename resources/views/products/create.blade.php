@@ -10,51 +10,49 @@
                 </div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
-                        @csrf
+                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-                        <div class="mb-3">
-                            <label class="form-label">Nama Menu</label>
-                            <input type="text" class="form-control" name="name" required placeholder="Contoh: Odeng Spicy">
-                        </div>
+<div class="mb-3">
+<label>Nama Produk</label>
+<input type="text" name="nama_produk" class="form-control" required>
+@error('nama_produk') <span class="text-danger">{{ $message }}</span> @enderror
+</div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Kategori</label>
-                                <select class="form-select" name="category" required>
-                                    <option value="" disabled selected>Pilih Kategori...</option>
-                                    <option value="Makanan Berat">Makanan Berat</option>
-                                    <option value="Snack">Snack / Gorengan</option>
-                                    <option value="Minuman">Minuman</option>
-                                    <option value="Dessert">Dessert</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Harga (Rp)</label>
-                                <input type="number" class="form-control" name="price" required placeholder="15000">
-                            </div>
-                        </div>
+<div class="mb-3">
+<label>Deskripsi</label>
+<textarea name="deskripsi_produk" class="form-control"></textarea>
+</div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Stok Awal</label>
-                            <input type="number" class="form-control" name="stock" value="10" required>
-                        </div>
+<div class="mb-3">
+<label>Harga</label>
+<input type="number" name="harga_produk" class="form-control" required>
+@error('harga_produk') <span class="text-danger">{{ $message }}</span> @enderror
+</div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control" name="description" rows="3"></textarea>
-                        </div>
+<div class="mb-3">
+<label>Stok</label>
+<input type="number" name="stok_produk" class="form-control" required>
+@error('stok_produk') <span class="text-danger">{{ $message }}</span> @enderror
+</div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Foto Menu</label>
-                            <input type="file" class="form-control" name="image" accept="image/*" required>
-                        </div>
+<div class="mb-3">
+<label>Kategori</label>
+<select name="kategori_produk" class="form-control">
+<option value="coffe">Coffee</option>
+<option value="non-coffe">Non-Coffee</option>
+<option value="food">Food</option>
+</select>
+</div>
 
-                        <div class="d-flex justify-content-end">
-                            <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2">Batal</a>
-                            <button type="submit" class="btn btn-primary">Simpan Menu</button>
-                        </div>
-                    </form>
+<div class="mb-3">
+<label>Foto Produk</label>
+<input type="file" name="foto_produk" class="form-control" required>
+@error('foto_produk') <span class="text-danger">{{ $message }}</span> @enderror
+</div>
+
+<button type="submit" class="btn btn-primary">Simpan Produk</button>
+</form>
                 </div>
             </div>
         </div>
