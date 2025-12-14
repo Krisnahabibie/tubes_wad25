@@ -1,52 +1,55 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\PromoController;
-use App\Http\Controllers\KeranjangController;
-use App\Http\Controllers\ReservasiController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Middleware\IsManager;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\HomeController;
 
-//tampilan halaman depan
-Route::get('/', [HomeController::class, 'landingPage']);
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
-//khusus admin
-Route::middleware(['auth', \App\Http\Middleware\Admin::class])->group(function () {
-    Route::resource('products', App\Http\Controllers\ProductController::class);
-    Route::resource('promos', App\Http\Controllers\PromoController::class);
-    Route::resource('reservasis', App\Http\Controllers\ReservasiController::class)->only(['index','update','destroy']);
-
-    Route::get( '/keranjang',[KeranjangController::class, 'index'])->name('keranjangs.index');
-    Route::post('keranjang/add/{product}', [KeranjangController::class, 'add'])->name('keranjangs.add');
-    Route::delete('keranjang/remove/{product}', [KeranjangController::class, 'destroy'])->name('keranjangs.remove');
-
+// 1. HALAMAN DEPAN (Landing Page)
+// 1. HALAMAN DEPAN
+Route::get('/', function () {
+    // Kita kirim array kosong [] bernama 'promos' agar welcome.blade.php tidak error
+    return view('welcome', ['promos' => []]);
 });
 
-// Khusus User yang Login (Bisa Belanja & Reservasi)  
-  route::middleware(['auth'])->group(function () {
-    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjangs.index');
-    Route::post('keranjang/add/{product}', [KeranjangController::class, 'add'])->name('keranjangs.add');
-    Route::delete('keranjang/remove/{product}', [KeranjangController::class, 'destroy'])->name('keranjangs.remove');
+// 2. HALAMAN MENU (Produk)
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
-    //USER RESERVASI
-    Route::resource('reservasis', ReservasiController::class)->except(['index', 'update', 'destroy']);
-    
-    Route::resource('riviews', RiviewController::class);
-
-  });
-
-
-//khusus manager
-Route::middleware(['auth', 'role:IsManager'])->prefix('manager')->group(function () {
-    Route::resource('staff', StaffController::class);
-});
-//dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// 3. AUTH (Login/Register)
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard_user');
+// 4. DASHBOARD & HOME
+// Kita buat dua jalur ke HomeController agar 'dashboard_user' tidak error
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard_user'); // <-- INI BARIS PENYELAMAT ERROR ANDA
+
+// 5. FITUR MEMBER (Harus Login)
+Route::middleware(['auth'])->group(function () {
+    
+    // Order / Pesanan
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    
+    // Keranjang
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+    
+    // Reservasi
+    Route::get('/reservasi', [ReservationController::class, 'index'])->name('reservasi.index');
+    Route::post('/reservasi', [ReservationController::class, 'store'])->name('reservasi.store');
+    
+    // Review
+    Route::get('/reviews/{product_id}', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+});

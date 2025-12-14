@@ -4,20 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth; // Pastikan baris ini ada
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
     /**
@@ -25,16 +15,24 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    // Hapus atau comment baris $redirectTo di bawah ini jika ada
+    // protected $redirectTo = '/home'; 
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
+    }
+
+    // TAMBAHKAN FUNGSI INI UNTUK REDIRECT SESUAI ROLE
+    public function redirectTo()
+    {
+        $role = Auth::user()->role;
+
+        if ($role === 'admin' || $role === 'manager') {
+            return '/dashboard'; // Admin/Manager ke Dashboard Statistik
+        }
+
+        return '/home'; // Customer biasa ke Halaman Belanja
     }
 }

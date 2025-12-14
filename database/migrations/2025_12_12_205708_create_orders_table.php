@@ -16,12 +16,16 @@ return new class extends Migration
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->string('invoice_code')->unique(); // Contoh: INV-202501001
         $table->decimal('total_price', 12, 2);
+
+
         // Status pesanan penting untuk Admin Dapur/Kasir
         $table->enum('status', ['pending', 'paid', 'cooking', 'served', 'completed', 'cancelled'])->default('pending');
         $table->timestamps();
         });
+
+
         // Tabel detail barang apa saja yang dibeli dalam 1 order
-    Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
         $table->id();
         $table->foreignId('order_id')->constrained()->onDelete('cascade');
         $table->foreignId('product_id')->constrained()->onDelete('cascade');
@@ -36,6 +40,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');
     }
 };

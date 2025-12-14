@@ -21,7 +21,8 @@ class HomeController extends Controller
     public function landingPage()
     {
         $products = \App\Models\Product::all();
-        $promos = \App\Models\promo::all();
+
+        $promos = \App\Models\Promo::whereDate('tanggal_berakhir', '>=', now())->get();
         return view('welcome', compact('products', 'promos')); // View 'welcome' adalah tampilan ala Lawson
     }
 }

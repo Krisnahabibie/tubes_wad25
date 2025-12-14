@@ -19,4 +19,9 @@ protected $table = 'products';
         'kategori_produk',
         'foto_produk',
     ];
+
+public function reviews()
+{
+    return $this->hasMany(Review::class);
+}
 }

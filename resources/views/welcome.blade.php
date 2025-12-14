@@ -1,112 +1,152 @@
 @extends('layouts.app')
 
 @section('content')
-
+{{-- Custom CSS untuk Hero Section --}}
 <style>
-    .promo-badge { background: rgba(255,255,255,0.85); color: #222; font-weight:700; }
-    .promo-card .card-img-overlay { background: linear-gradient(transparent, rgba(0,0,0,0.55)); }
-    .product-card img { transition: transform .25s ease; }
-    .product-card:hover img { transform: scale(1.03); }
+    .hero-section {
+        background: linear-gradient(rgba(0, 51, 153, 0.8), rgba(0, 51, 153, 0.6)), url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        border-radius: 0 0 50px 50px; /* Lengkungan bawah */
+    }
+    .promo-card {
+        transition: transform 0.3s;
+        border: none;
+        overflow: hidden;
+    }
+    .promo-card:hover {
+        transform: translateY(-10px);
+    }
+    .section-title {
+        color: #003399; /* Lawson Blue */
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 </style>
 
-<div class="container mt-4">
-    <div class="p-5 mb-4 rounded-3 shadow-sm border" style="background-image: url('https://source.unsplash.com/1200x400/?cafe,coffee'); background-size: cover; background-position: center;">
-        <div class="container-fluid py-5 text-white" style="background: rgba(0,0,0,0.45); border-radius: 10px;">
-            <h1 class="display-5 fw-bold">Selamat Datang di Cafe Telkom</h1>
-            <p class="col-md-8 fs-4">Nikmati sajian kopi terbaik dan snack lezat ala Lawson dengan harga mahasiswa!</p>
-            <a href="#promos" class="btn btn-light btn-lg me-2">Lihat Promo</a>
-            <a href="#menu" class="btn btn-primary btn-lg" type="button">Lihat Menu</a>
-        </div>
+{{-- 1. HERO SECTION --}}
+<div class="hero-section text-center mb-5">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-3">Nikmati Kopi & Snack Favoritmu</h1>
+        <p class="lead mb-4">Cafe Telkom x Lawson Style. Harga Mahasiswa, Rasa Juara.</p>
+        @guest
+            <a href="{{ route('login') }}" class="btn btn-warning btn-lg px-5 fw-bold rounded-pill shadow">
+                Pesan Sekarang <i class="bi bi-arrow-right"></i>
+            </a>
+            <div class="mt-3 text-white-50">
+                Belum punya akun? <a href="{{ route('register') }}" class="text-white text-decoration-underline">Daftar disini</a>
+            </div>
+        @else
+            <a href="{{ route('dashboard_user') }}" class="btn btn-light btn-lg px-5 fw-bold rounded-pill shadow text-primary">
+                Lihat Menu <i class="bi bi-shop"></i>
+            </a>
+        @endguest
     </div>
 </div>
 
-<div class="container" id="promos">
-    <h3 class="border-start border-4 border-danger ps-3 mb-4">Promo Pilihan</h3>
-
-    @if(isset($promos) && $promos->count())
-        <div id="promoCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                @foreach($promos as $i => $promo)
-                    <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
-                        <div class="card text-white promo-card">
-                            <img src="{{ $promo->gambar_promo ? asset('storage/'.$promo->gambar_promo) : 'https://placehold.co/1200x400?text=Promo' }}" class="d-block w-100" alt="{{ $promo->judul_promo }}" style="height:320px; object-fit:cover;">
-                            <div class="card-img-overlay d-flex flex-column justify-content-end p-4">
-                                <span class="badge promo-badge mb-2">Diskon {{ rtrim(rtrim($promo->diskon_persen, '0'), '.') }}%</span>
-                                <h3 class="card-title">{{ $promo->judul_promo }}</h3>
-                                <p class="card-text">{{ \Illuminate\Support\Str::limit($promo->deskripsi_promo, 120) }}</p>
-                                <div>
-                                    <a href="#menu" class="btn btn-primary">Gunakan Promo</a>
+<div class="container">
+    
+   {{-- 2. SECTION PROMO --}}
+    <div class="container py-5" id="promos">
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-8">
+                <h2 class="fw-bold text-dark border-start border-4 border-danger ps-3">Promo Spesial Hari Ini</h2>
+                <p class="text-muted ms-3">Dapatkan penawaran terbaik khusus untuk mahasiswa!</p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            @forelse($promos as $promo)
+                <div class="col-md-4 mb-4">
+                    <div class="card promo-card shadow-sm h-100 border-0">
+                        {{-- Badge Diskon --}}
+                        <div class="position-absolute top-0 end-0 bg-warning text-dark px-3 py-1 m-3 rounded-pill fw-bold shadow-sm" style="z-index: 2;">
+                            Hemat {{ $promo->diskon_persen }}%
+                        </div>
+    
+                        {{-- Gambar Promo --}}
+                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                            @if($promo->gambar_promo)
+                                <img src="{{ asset('storage/' . $promo->gambar_promo) }}" class="w-100 h-100 object-fit-cover" alt="{{ $promo->judul_promo }}">
+                            @else
+                                <div class="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center text-white">
+                                    <i class="bi bi-image fs-1"></i>
                                 </div>
-                            </div>
+                            @endif
                         </div>
-                    </div>
-                @endforeach
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-
-        <div class="row row-cols-1 row-cols-md-3 g-3 mb-5">
-            @foreach($promos as $promo)
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="{{ $promo->gambar_promo ? asset('storage/'.$promo->gambar_promo) : 'https://placehold.co/600x300?text=Promo' }}" class="card-img-top" style="height:160px; object-fit:cover;">
+    
                         <div class="card-body">
-                            <h5 class="card-title">{{ $promo->judul_promo }}</h5>
-                            <p class="card-text text-muted small">{{ \Illuminate\Support\Str::limit($promo->deskripsi_promo, 80) }}</p>
-                        </div>
-                        <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-danger">-{{ rtrim(rtrim($promo->diskon_persen, '0'), '.') }}%</span>
-                            <a href="#menu" class="btn btn-sm btn-outline-primary">Lihat</a>
+                            <small class="text-danger fw-bold">
+                                <i class="bi bi-calendar-event me-1"></i> 
+                                Berlaku sampai {{ \Carbon\Carbon::parse($promo->tanggal_berakhir)->format('d M Y') }}
+                            </small>
+                            <h5 class="card-title fw-bold mt-2">{{ $promo->judul_promo }}</h5>
+                            <p class="card-text text-muted small">
+                                {{ Str::limit($promo->deskripsi_promo, 80) }}
+                            </p>
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                {{-- Tampilan Jika Tidak Ada Promo --}}
+                <div class="col-12 text-center py-5 bg-light rounded-3">
+                    <h5 class="text-muted">Belum ada promo aktif saat ini.</h5>
+                    <p class="text-muted small">Nantikan update selanjutnya ya!</p>
+                </div>
+            @endforelse
         </div>
-    @else
-        <div class="alert alert-info">Belum ada promo saat ini. Cek kembali nanti.</div>
-    @endif
-</div>
+    </div>
 
-<div class="container mt-4" id="menu">
-    <h3 class="border-start border-4 border-primary ps-3 mb-4">Menu Pilihan Hari Ini</h3>
+    {{-- 3. SECTION MENU PREVIEW (Hanya Tampilan) --}}
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h3 class="section-title">☕ Menu Terfavorit</h3>
+            <p class="text-muted">Login untuk mulai memesan menu lezat ini.</p>
+        </div>
 
-    <div class="row">
-        @forelse($products as $product)
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm border-0 product-card">
-                    <img src="{{ $product->foto_produk ? asset('storage/'.$product->foto_produk) : 'https://placehold.co/300x200?text=No+Image' }}" 
-                         class="card-img-top" alt="{{ $product->nama_produk }}" style="height: 200px; object-fit: cover;">
+        @foreach($products->take(4) as $product) 
+        {{-- Kita hanya ambil 4 produk teratas sebagai preview --}}
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <img src="{{ $product->foto_produk ? asset('storage/' . $product->foto_produk) : 'https://placehold.co/300x200?text=Menu+Cafe' }}" 
+                     class="card-img-top rounded-top" 
+                     alt="{{ $product->nama_produk }}"
+                     style="height: 180px; object-fit: cover;">
+                <div class="card-body text-center">
+                    <h5 class="fw-bold text-dark mb-1">{{ $product->nama_produk }}</h5>
+                    <p class="text-primary fw-bold mb-3">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</p>
                     
-                    <div class="card-body">
-                        <span class="badge bg-warning text-dark mb-2">{{ $product->kategori_produk }}</span>
-                        <h5 class="card-title">{{ $product->nama_produk }}</h5>
-                        <p class="card-text text-muted small">{{ Str::limit($product->deskripsi_produk, 50) }}</p>
-                        <h5 class="text-primary fw-bold">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</h5>
-                    </div>
-                    <div class="card-footer bg-white border-top-0 d-grid">
-                        <form action="{{ route('keranjangs.add', $product->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <button type="submit" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-plus"></i> Tambah
-                            </button>
-                        </form>
-                    </div>
+                    {{-- Tombol diarahkan ke Login --}}
+                    <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                        Login untuk Membeli
+                    </a>
                 </div>
             </div>
-        @empty
-            <div class="col-12 text-center py-5">
-                <div class="alert alert-info">Belum ada produk yang tersedia saat ini.</div>
-            </div>
-        @endforelse
+        </div>
+        @endforeach
     </div>
-</div>
 
+    {{-- 4. INFO SECTION --}}
+    <div class="row py-5 border-top">
+        <div class="col-md-4 text-center mb-3">
+            <i class="bi bi-clock-history fs-1 text-primary"></i>
+            <h5 class="fw-bold mt-2">Buka Setiap Hari</h5>
+            <p class="text-muted">08:00 - 22:00 WIB</p>
+        </div>
+        <div class="col-md-4 text-center mb-3">
+            <i class="bi bi-geo-alt-fill fs-1 text-danger"></i>
+            <h5 class="fw-bold mt-2">Lokasi Strategis</h5>
+            <p class="text-muted">Gedung Telyu Coffee, Bandung</p>
+        </div>
+        <div class="col-md-4 text-center mb-3">
+            <i class="bi bi-wifi fs-1 text-success"></i>
+            <h5 class="fw-bold mt-2">Free WiFi</h5>
+            <p class="text-muted">Koneksi kencang untuk nugas</p>
+        </div>
+    </div>
+
+</div>
 @endsection

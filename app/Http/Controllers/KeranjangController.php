@@ -19,9 +19,9 @@ class KeranjangController extends Controller
 
         // Hitung total harga
         $totalHarga = 0;
-        foreach($keranjangs as $item) {
-            $totalHarga += $item->product->harga_produk * $item->quantity;
-        }
+        $totalHarga = $keranjangs->sum(function($item) {
+        return $item->product->harga_produk * $item->quantity;
+});
 
         return view('keranjang.index', compact('keranjangs', 'totalHarga'));
     }
@@ -65,4 +65,51 @@ class KeranjangController extends Controller
 
         return redirect()->back()->with('error', 'Tidak memiliki akses.');
     }
+
+    public function updateQuantity(Request $request, $id)
+{
+    $cart = \App\Models\Keranjang::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+    
+    // Validasi input
+    $request->validate([
+        'action' => 'required|in:increase,decrease'
+    ]);
+
+    if (!$cart->product) {
+        return response()->json(['error' => 'Produk tidak ditemukan'], 404);
+    }
+
+    // Logika Tambah/Kurang
+    if ($request->action == 'increase') {
+        if ($cart->quantity < $cart->product->stok_produk) {
+            $cart->increment('quantity');
+        } else {
+            return response()->json(['error' => 'Stok maksimal tercapai'], 400);
+        }
+    } else {
+        if ($cart->quantity > 1) {
+            $cart->decrement('quantity');
+        }
+    }
+
+    // Hitung ulang total keranjang user ini
+    $allCarts = \App\Models\Keranjang::where('user_id', auth()->id())->get();
+    $grandTotal = 0;
+    $totalItem = 0;
+    
+    foreach($allCarts as $c) {
+        if($c->product) {
+            $grandTotal += $c->product->harga_produk * $c->quantity;
+            $totalItem += $c->quantity;
+        }
+    }
+
+    return response()->json([
+        'success' => true,
+        'quantity' => $cart->quantity,
+        'item_subtotal' => number_format($cart->product->harga_produk * $cart->quantity, 0, ',', '.'),
+        'grand_total' => number_format($grandTotal, 0, ',', '.'),
+        'total_item' => $totalItem
+    ]);
+}
 }

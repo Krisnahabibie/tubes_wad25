@@ -39,8 +39,8 @@
 <div class="mb-3">
 <label>Kategori</label>
 <select name="kategori_produk" class="form-control">
-<option value="coffe">Coffee</option>
-<option value="non-coffe">Non-Coffee</option>
+<option value="coffee">Coffee</option>
+<option value="non-coffee">Non-Coffee</option>
 <option value="food">Food</option>
 </select>
 </div>

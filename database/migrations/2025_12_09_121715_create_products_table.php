@@ -18,7 +18,7 @@ return new class extends Migration
         $table->decimal('harga_produk', 10, 2);
         $table->integer('stok_produk');
         $table->string('foto_produk')->nullable(); // Foto produk
-        $table->enum('kategori_produk', ['coffe', 'non-coffe','food']);
+        $table->enum('kategori_produk', ['coffee', 'non-coffee','food']);
         $table->timestamps();
         });
     }
@@ -28,6 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        
         Schema::dropIfExists('products');
     }
+
 };
